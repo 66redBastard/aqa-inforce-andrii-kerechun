@@ -55,6 +55,10 @@ Thumbs.db
 
 # files for tasks 
 task.md
+admin.html
+component.html
+dashboard.html
+login.html
 
 # Playwright
 /playwright-report/

@@ -3,9 +3,9 @@ import path from "path";
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-export const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
-export const ADMIN_URL = process.env.ADMIN_URL || "http://localhost:3000/admin";
-export const API_URL = process.env.API_URL || "http://localhost:3000/api";
+export const BASE_URL = process.env.BASE_URL;
+export const ADMIN_URL = process.env.ADMIN_URL;
+export const API_URL = process.env.API_URL;
 export const WORKERS = parseInt(process.env.WORKERS || "1", 10);
 export const HEADLESS =
   process.env.HEADLESS === undefined ? false : process.env.HEADLESS === "true";
