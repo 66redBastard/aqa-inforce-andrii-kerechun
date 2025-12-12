@@ -8,13 +8,15 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
-    "fsevents": "^2.3.2",
     "playwright": "^1.57.0",
     "playwright-core": "^1.57.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/node": "^25.0.0"
+  },
+  "optionalDependencies": {
+     "fsevents": "^2.3.2"
   },
   "scripts": {
     "test": "npx playwright test",

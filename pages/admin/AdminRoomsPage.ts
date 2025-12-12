@@ -31,6 +31,15 @@ export class AdminRoomsPage extends AdminBasePage {
   }
 
   /**
+   * Clicks on a room row by index to navigate to the edit page.
+   * @param roomIndex - Index of the room to edit (0-based).
+   */
+  async clickRoomRow(roomIndex: number): Promise<void> {
+    const rows = this.page.locator('[data-testid="roomlisting"]');
+    await rows.nth(roomIndex).click();
+  }
+
+  /**
    * Creates a new room with the given details.
    * @param roomName - Room name (e.g., '104').
    * @param type - Room type (e.g., 'Single').
@@ -59,48 +68,6 @@ export class AdminRoomsPage extends AdminBasePage {
     }
 
     await this.page.locator("#createRoom").click();
-  }
-
-  /**
-   * Edits the room at the given index with new details.
-   * @param roomIndex - Index of the room to edit (0-based).
-   * @param newPrice - New room price.
-   * @param newFeatures - New array of features.
-   */
-  async editRoom(
-    roomIndex: number,
-    newPrice: number,
-    newFeatures: string[]
-  ): Promise<void> {
-    const rooms = await this.getRoomRows();
-    await rooms[roomIndex].editRoom();
-
-    // Update price
-    await this.page.locator("#roomPrice").fill(newPrice.toString());
-
-    // Update features (uncheck all, then check new ones)
-    const allFeatures = [
-      "WiFi",
-      "TV",
-      "Radio",
-      "Refreshments",
-      "Safe",
-      "Views",
-    ];
-    for (const feature of allFeatures) {
-      const checkboxId = this.getCheckboxId(feature);
-      if (checkboxId) {
-        await this.page.locator(`#${checkboxId}`).uncheck();
-      }
-    }
-    for (const feature of newFeatures) {
-      const checkboxId = this.getCheckboxId(feature);
-      if (checkboxId) {
-        await this.page.locator(`#${checkboxId}`).check();
-      }
-    }
-
-    await this.page.locator("#createRoom").click(); // Assuming same button for edit
   }
 
   /**
