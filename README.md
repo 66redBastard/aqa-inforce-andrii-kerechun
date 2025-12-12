@@ -37,36 +37,21 @@ This project implements end-to-end (E2E) testing for a web application using Pla
   `npx playwright test tests/api/`
 - **Run with UI mode**:
   `npx playwright test --ui`
+- **RUN different mode tests**
 
 ```
-aqa-inforce-andrii-kerechun/
-├── components/
-│   └── admin/
-│       └── RoomRowComponent.ts    # Component for room rows in admin UI
-├── config/
-│   └── env.ts                     # Environment configuration (base URL)
-├── pages/
-│   ├── BasePage.ts                # Base page object class
-│   ├── admin/
-│   │   ├── AdminBasePage.ts       # Base for admin pages
-│   │   ├── AdminLoginPage.ts      # Login page for admin
-│   │   └── AdminRoomsPage.ts      # Rooms management page
-│   └── client/
-│       ├── ClientBasePage.ts      # Base for client pages
-│       └── HomePage.ts            # Home page for users
-├── tests/
-│   ├── admin/
-│   │   └── login.spec.ts          # UI test for admin login
-│   ├── api/
-│   │   ├── adminRooms.spec.ts     # API test for admin rooms
-│   │   └── api.spec.ts            # API tests for room operations
-│   └── client/
-│       └── login.spec.ts          # UI test for admin login
-├── test-cases.txt                 # Manual test cases documentation
-├── package.json                   # Dependencies and scripts
-├── playwright.config.ts           # Playwright configuration
-└── README.md                      # This file
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:report": "npx playwright show-report",
+    "lint": "npx eslint . --ext .ts"
 ```
+
+## Local variables in .env
+
+Fill `.env` like in `.env.example`
+uYou can choose how many _WORKERS_ will do parralel execution
+Envariomental configuration in `config/env.ts`
 
 ## Test Cases
 
