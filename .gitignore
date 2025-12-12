@@ -59,6 +59,7 @@ admin.html
 component.html
 dashboard.html
 login.html
+rooms.html
 
 # Playwright
 /playwright-report/

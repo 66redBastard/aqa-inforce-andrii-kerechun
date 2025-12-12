@@ -1,7 +1,7 @@
 import { Page } from "@playwright/test";
 import { AdminBasePage } from "./AdminBasePage";
-import { LoginFormComponent } from "../components/LoginFormComponent";
-import { ADMIN_USERNAME, ADMIN_PASSWORD } from "../config/env";
+import { LoginFormComponent } from "../../components/LoginFormComponent";
+import { ADMIN_USERNAME, ADMIN_PASSWORD } from "../../config/env";
 
 /**
  * Page Object for the admin login page.
@@ -19,28 +19,17 @@ export class AdminLoginPage extends AdminBasePage {
    * Navigates to the login page.
    */
   async navigate(): Promise<void> {
-    await this.goto("/admin"); // Adjust path if needed based on site structure
+    await this.goto("");
   }
 
-  /**
-   * Fills the username field.
-   * @param username - The username to enter.
-   */
   async fillUsername(username: string): Promise<void> {
     await this.loginForm.fillUsername(username);
   }
 
-  /**
-   * Fills the password field.
-   * @param password - The password to enter.
-   */
   async fillPassword(password: string): Promise<void> {
     await this.loginForm.fillPassword(password);
   }
 
-  /**
-   * Clicks the login button.
-   */
   async clickLoginButton(): Promise<void> {
     await this.loginForm.clickLoginButton();
   }
