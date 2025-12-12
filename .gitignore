@@ -62,6 +62,9 @@ login.html
 rooms.html
 reservations.html
 bookingdate.html
+adminEditRoom.html
+adminEditRoomEditable.html
+
 
 # Playwright
 /playwright-report/

@@ -12,6 +12,18 @@ export class RoomRowComponent {
   }
 
   /**
+   * Gets the room ID from the row's id attribute.
+   */
+  async getRoomId(): Promise<number> {
+    const id = await this.rowLocator.getAttribute("id");
+    console.log("Room ID attribute:", id);
+    if (!id) {
+      console.log("Room ID attribute not found");
+    }
+    return parseInt(id.replace("room", ""), 10);
+  }
+
+  /**
    * Gets the room name.
    */
   async getRoomName(): Promise<string> {
