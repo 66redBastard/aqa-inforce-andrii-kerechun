@@ -16,9 +16,7 @@ export class RoomRowComponent {
    */
   async getRoomName(): Promise<string> {
     return (
-      (await this.rowLocator
-        .locator("#roomName101, #roomName102, #roomName103")
-        .textContent()) || ""
+      (await this.rowLocator.locator('[id^="roomName"]').textContent()) || ""
     );
   }
 
@@ -26,18 +24,16 @@ export class RoomRowComponent {
    * Gets the room type.
    */
   async getType(): Promise<string> {
-    return (
-      (await this.rowLocator
-        .locator("#typeSingle, #typeDouble, #typeSuite")
-        .textContent()) || ""
-    );
+    return (await this.rowLocator.locator('[id^="type"]').textContent()) || "";
   }
 
   /**
    * Gets the accessibility status.
    */
   async getAccessible(): Promise<boolean> {
-    const text = await this.rowLocator.locator("#accessibletrue").textContent();
+    const text = await this.rowLocator
+      .locator('[id^="accessible"]')
+      .textContent();
     return text === "true";
   }
 
@@ -46,7 +42,7 @@ export class RoomRowComponent {
    */
   async getPrice(): Promise<number> {
     const text = await this.rowLocator
-      .locator("#roomPrice100, #roomPrice150, #roomPrice225")
+      .locator('[id^="roomPrice"]')
       .textContent();
     return parseInt(text || "0", 10);
   }
@@ -56,11 +52,7 @@ export class RoomRowComponent {
    */
   async getDetails(): Promise<string> {
     return (
-      (await this.rowLocator
-        .locator(
-          "#detailsTV\\,WiFi\\,Safe, #detailsTV\\,Radio\\,Safe, #detailsRadio\\,WiFi\\,Safe"
-        )
-        .textContent()) || ""
+      (await this.rowLocator.locator('[id^="details"]').textContent()) || ""
     );
   }
 
