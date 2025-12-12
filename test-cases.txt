@@ -1,0 +1,114 @@
+# Test Cases for Room Booking UI Flows
+# Adapted from task requirements and reference examples, ensuring originality and compliance.
+
+## Test Case 1: Successful Room Booking with Valid Information
+- **ID:** TC_UI_001
+- **Title:** Verify that a room can be reserved using correct details.
+- **Objective:** Confirm the booking process works end-to-end with proper inputs.
+- **Preconditions:** The application is accessible at https://automationintesting.online/, and the user is on the main page.
+- **Test Data:** Check-in: future date (e.g., tomorrow); Check-out: after check-in (e.g., day after); First Name: 4-17 characters; Last Name: 4-29 characters; Email: standard format; Phone: 12-20 digits.
+- **Steps:**
+  1. Choose a future check-in date.
+  2. Choose a check-out date later than check-in.
+  3. Press the availability check button.
+  4. Select an open room from the list.
+  5. Click the booking initiation button.
+  6. Fill in a correct first name.
+  7. Fill in a correct last name.
+  8. Fill in a correct email.
+  9. Fill in a correct phone number.
+  10. Submit the booking form.
+- **Expected Result:** Success notification appears with "Booking Confirmed" and the selected dates in YYYY-MM-DD format. The form is hidden, and no errors are shown.
+- **Postconditions:** None.
+
+## Test Case 2: Failed Booking Due to Incorrect First Name
+- **ID:** TC_UI_002
+- **Title:** Ensure booking fails with improper first name input.
+- **Objective:** Validate form validation for first name field.
+- **Preconditions:** The application is accessible at https://automationintesting.online/, and the user is on the main page.
+- **Test Data:** Check-in/Out: valid future dates; First Name: too short (<3), too long (>18), or empty; Other fields: valid.
+- **Steps:**
+  1. Pick a valid check-in date.
+  2. Pick a valid check-out date.
+  3. Check room availability.
+  4. Choose an available room.
+  5. Start the reservation process.
+  6. Input an incorrect first name.
+  7. Input correct last name, email, and phone.
+  8. Attempt to complete the booking.
+- **Expected Result:** Form remains visible. Error message under first name: "size must be between 3 and 18" or "Firstname should not be blank". Other data stays entered.
+- **Postconditions:** None.
+
+## Test Case 3: Failed Booking Due to Incorrect Last Name
+- **ID:** TC_UI_003
+- **Title:** Ensure booking fails with improper last name input.
+- **Objective:** Validate form validation for last name field.
+- **Preconditions:** The application is accessible at https://automationintesting.online/, and the user is on the main page.
+- **Test Data:** Check-in/Out: valid future dates; Last Name: empty, <3, or >30 characters; Other fields: valid.
+- **Steps:**
+  1. Pick a valid check-in date.
+  2. Pick a valid check-out date.
+  3. Check room availability.
+  4. Choose an available room.
+  5. Start the reservation process.
+  6. Input correct first name.
+  7. Input an incorrect last name.
+  8. Input correct email and phone.
+  9. Attempt to complete the booking.
+- **Expected Result:** Form remains visible. Error message under last name: "size must be between 3 and 30" or "Lastname should not be blank". Other data stays entered.
+- **Postconditions:** None.
+
+## Test Case 4: Failed Booking Due to Incorrect Email
+- **ID:** TC_UI_004
+- **Title:** Ensure booking fails with improper email input.
+- **Objective:** Validate form validation for email field.
+- **Preconditions:** The application is accessible at https://automationintesting.online/, and the user is on the main page.
+- **Test Data:** Check-in/Out: valid future dates; Email: invalid format or empty; Other fields: valid.
+- **Steps:**
+  1. Pick a valid check-in date.
+  2. Pick a valid check-out date.
+  3. Check room availability.
+  4. Choose an available room.
+  5. Start the reservation process.
+  6. Input correct first name and last name.
+  7. Input an incorrect email.
+  8. Input correct phone.
+  9. Attempt to complete the booking.
+- **Expected Result:** Form remains visible. Error message under email: "must not be empty" or "must be a well-formed email address". Other data stays entered.
+- **Postconditions:** None.
+
+## Test Case 5: Failed Booking Due to Incorrect Phone
+- **ID:** TC_UI_005
+- **Title:** Ensure booking fails with improper phone input.
+- **Objective:** Validate form validation for phone field.
+- **Preconditions:** The application is accessible at https://automationintesting.online/, and the user is on the main page.
+- **Test Data:** Check-in/Out: valid future dates; Phone: empty, <11, or >21 characters; Other fields: valid.
+- **Steps:**
+  1. Pick a valid check-in date.
+  2. Pick a valid check-out date.
+  3. Check room availability.
+  4. Choose an available room.
+  5. Start the reservation process.
+  6. Input correct first name, last name, and email.
+  7. Input an incorrect phone.
+  8. Attempt to complete the booking.
+- **Expected Result:** Form remains visible. Error message under phone: "must not be empty" or "size must be between 11 and 21". Other data stays entered.
+- **Postconditions:** None.
+
+## Test Case 6: Verify Booked Dates Are Unavailable
+- **ID:** TC_UI_006
+- **Title:** Confirm that reserved dates are not selectable again.
+- **Objective:** Ensure the system blocks double-booking for the same period.
+- **Preconditions:** The application is accessible at https://automationintesting.online/, and a room has been booked in a prior test.
+- **Test Data:** Same dates as the previous booking.
+- **Steps:**
+  1. Go to the main booking page.
+  2. Try to select the previously booked check-in and check-out dates.
+  3. Attempt to proceed with booking for the same room.
+- **Expected Result:** The booked dates appear as unavailable (e.g., disabled or grayed out) in the date picker, preventing selection.
+- **Postconditions:** None.
+
+# Notes:
+- These cases cover the required UI flows with positive, negative, and edge scenarios for scalability.
+- Manually test and update "Actual Result" fields as needed.
+- Use this for automating UI tests in Part 2.

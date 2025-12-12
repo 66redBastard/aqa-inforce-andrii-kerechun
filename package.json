@@ -16,7 +16,13 @@
     "@playwright/test": "^1.57.0",
     "@types/node": "^25.0.0"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:report": "npx playwright show-report",
+    "lint": "npx eslint . --ext .ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/66redBastard/aqa-inforce-andrii-kerechun.git"
