@@ -6,7 +6,6 @@ import { AdminRoomsPage } from "../../pages/admin/AdminRoomsPage";
 // WIP: i'm on the way to implement CRUD
 test("Create a Room using Admin API and check on User API", async ({
   page,
-  request,
 }) => {
   const loginPage = new AdminLoginPage(page);
   const adminRoomsPage = new AdminRoomsPage(page);
@@ -18,7 +17,7 @@ test("Create a Room using Admin API and check on User API", async ({
   await page.waitForURL(/\/admin\/rooms/);
 
   // Create room via Admin API
-  const createResponse = await request.post(`${BASE_URL}/room`, {
+  const createResponse = await page.request.post(`${BASE_URL}/api/room`, {
     data: {
       roomName: roomName,
       type: "Suite",
@@ -27,15 +26,19 @@ test("Create a Room using Admin API and check on User API", async ({
       features: ["WiFi", "TV", "Safe"],
     },
   });
-  expect(createResponse.ok()).toBeTruthy();
+  console.log("Create response status:", createResponse.status());
+  console.log("Create response text:", await createResponse.text());
+  expect(createResponse.status()).toBe(200);
   const createdRoom = await createResponse.json();
-  expect(createdRoom.roomName).toBe("107");
+  expect(createdRoom.success).toBe(true);
 
   // Check room was created on User API
-  const userResponse = await request.get(`${BASE_URL}/api/room`);
+  const userResponse = await page.request.get(`${BASE_URL}/api/room`);
+  console.log("User response status:", userResponse.status());
+  console.log("User response text:", await userResponse.text());
   expect(userResponse.ok()).toBeTruthy();
   const userRooms = await userResponse.json();
-  const room = userRooms.rooms.find((r: any) => r.roomName === "107");
+  const room = userRooms.rooms.find((r: any) => r.roomName === roomName);
   expect(room).toBeDefined();
   expect(room.type).toBe("Suite");
 });
