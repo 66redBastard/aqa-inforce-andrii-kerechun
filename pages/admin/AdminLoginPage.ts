@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 import { AdminBasePage } from "./AdminBasePage";
-import { LoginFormComponent } from "../../components/LoginFormComponent";
+import { LoginFormComponent } from "../../components/admin/LoginFormComponent";
 import { ADMIN_USERNAME, ADMIN_PASSWORD } from "../../config/env";
 
 /**
