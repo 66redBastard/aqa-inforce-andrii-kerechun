@@ -1,12 +1,12 @@
 import { Page } from "@playwright/test";
-import { ClientBasePage } from "../client/ClientBasePage";
+import { AdminBasePage } from "./AdminBasePage";
 import { RoomRowComponent } from "../../components/admin/RoomRowComponent";
 
 /**
  * Page Object for the admin rooms page.
- * Handles viewing room listings and creating new rooms.
+ * Handles viewing room listings, creating, and editing rooms.
  */
-export class AdminRoomsPage extends ClientBasePage {
+export class AdminRoomsPage extends AdminBasePage {
   constructor(page: Page) {
     super(page);
   }
@@ -15,7 +15,7 @@ export class AdminRoomsPage extends ClientBasePage {
    * Navigates to the admin rooms page.
    */
   async navigate(): Promise<void> {
-    await this.goto("/admin/rooms");
+    await this.goto("/rooms");
   }
 
   /**
@@ -59,6 +59,48 @@ export class AdminRoomsPage extends ClientBasePage {
     }
 
     await this.page.locator("#createRoom").click();
+  }
+
+  /**
+   * Edits the room at the given index with new details.
+   * @param roomIndex - Index of the room to edit (0-based).
+   * @param newPrice - New room price.
+   * @param newFeatures - New array of features.
+   */
+  async editRoom(
+    roomIndex: number,
+    newPrice: number,
+    newFeatures: string[]
+  ): Promise<void> {
+    const rooms = await this.getRoomRows();
+    await rooms[roomIndex].editRoom();
+
+    // Update price
+    await this.page.locator("#roomPrice").fill(newPrice.toString());
+
+    // Update features (uncheck all, then check new ones)
+    const allFeatures = [
+      "WiFi",
+      "TV",
+      "Radio",
+      "Refreshments",
+      "Safe",
+      "Views",
+    ];
+    for (const feature of allFeatures) {
+      const checkboxId = this.getCheckboxId(feature);
+      if (checkboxId) {
+        await this.page.locator(`#${checkboxId}`).uncheck();
+      }
+    }
+    for (const feature of newFeatures) {
+      const checkboxId = this.getCheckboxId(feature);
+      if (checkboxId) {
+        await this.page.locator(`#${checkboxId}`).check();
+      }
+    }
+
+    await this.page.locator("#createRoom").click(); // Assuming same button for edit
   }
 
   /**

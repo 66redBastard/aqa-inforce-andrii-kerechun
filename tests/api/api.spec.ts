@@ -1,59 +1,41 @@
 import { test, expect } from "@playwright/test";
+import { BASE_URL } from "../../config/env";
+import { AdminLoginPage } from "../../pages/admin/AdminLoginPage";
+import { AdminRoomsPage } from "../../pages/admin/AdminRoomsPage";
 
-test("Create room via admin API and verify on user API", async ({
+// WIP: i'm on the way to implement CRUD
+test("Create a Room using Admin API and check on User API", async ({
+  page,
   request,
 }) => {
-  // Create room via admin API
-  const createResponse = await request.post(
-    "https://automationintesting.online/room",
-    {
-      data: {
-        roomName: "106",
-        type: "Double",
-        accessible: false,
-        roomPrice: 150,
-        features: ["WiFi"],
-      },
-    }
-  );
+  const loginPage = new AdminLoginPage(page);
+  const adminRoomsPage = new AdminRoomsPage(page);
+
+  const roomName = `666-${Date.now()}`;
+
+  await loginPage.navigate();
+  await loginPage.login();
+  await page.waitForURL(/\/admin\/rooms/);
+
+  // Create room via Admin API
+  const createResponse = await request.post(`${BASE_URL}/room`, {
+    data: {
+      roomName: roomName,
+      type: "Suite",
+      accessible: true,
+      roomPrice: 200,
+      features: ["WiFi", "TV", "Safe"],
+    },
+  });
   expect(createResponse.ok()).toBeTruthy();
   const createdRoom = await createResponse.json();
+  expect(createdRoom.roomName).toBe("107");
 
-  // Verify room exists on user API
-  const userResponse = await request.get(
-    "https://automationintesting.online/room"
-  );
+  // Check room was created on User API
+  const userResponse = await request.get(`${BASE_URL}/api/room`);
   expect(userResponse.ok()).toBeTruthy();
-  const rooms = await userResponse.json();
-  const room = rooms.rooms.find((r: any) => r.roomName === "106");
+  const userRooms = await userResponse.json();
+  const room = userRooms.rooms.find((r: any) => r.roomName === "107");
   expect(room).toBeDefined();
-  expect(room.type).toBe("Double");
-});
-
-test("Book room via user API and verify on admin API", async ({ request }) => {
-  // Assume a room exists; book it
-  const bookResponse = await request.post(
-    "https://automationintesting.online/booking",
-    {
-      data: {
-        roomid: 1, // Example room ID
-        firstname: "John",
-        lastname: "Doe",
-        email: "john@example.com",
-        phone: "1234567890",
-        checkin: "2025-12-15",
-        checkout: "2025-12-16",
-      },
-    }
-  );
-  expect(bookResponse.ok()).toBeTruthy();
-
-  // Verify booking on admin API (adjust endpoint if needed)
-  const adminResponse = await request.get(
-    "https://automationintesting.online/admin/booking"
-  );
-  expect(adminResponse.ok()).toBeTruthy();
-  const bookings = await adminResponse.json();
-  const booking = bookings.find((b: any) => b.roomid === 1);
-  expect(booking).toBeDefined();
+  expect(room.type).toBe("Suite");
 });

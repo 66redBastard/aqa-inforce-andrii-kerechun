@@ -2,7 +2,7 @@ import { Locator } from "@playwright/test";
 
 /**
  * Component for individual room rows in the admin rooms list.
- * Handles room details and delete action.
+ * Handles room details and actions.
  */
 export class RoomRowComponent {
   private rowLocator: Locator;
@@ -54,6 +54,13 @@ export class RoomRowComponent {
     return (
       (await this.rowLocator.locator('[id^="details"]').textContent()) || ""
     );
+  }
+
+  /**
+   * Edits the room.
+   */
+  async editRoom(): Promise<void> {
+    await this.rowLocator.locator(".roomEdit").click();
   }
 
   /**
