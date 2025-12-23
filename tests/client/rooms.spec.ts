@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { HomePage } from "../../pages/client/HomePage";
 import { ReservationPage } from "../../pages/client/ReservationPage";
-import { getRandomFutureDates } from "../../utillities/dateRandorn";
+import { getRandomFutureDates } from "../../utilities/dateRandorn";
 
 test("TC_UI_001: Book room with valid data", async ({ page }) => {
   console.log("Test: Starting TC_UI_001");

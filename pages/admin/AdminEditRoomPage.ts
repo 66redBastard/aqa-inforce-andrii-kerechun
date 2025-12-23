@@ -1,5 +1,11 @@
 import { Page } from "@playwright/test";
 import { AdminBasePage } from "./AdminBasePage";
+import {
+  FEATURE_CHECKBOX_IDS,
+  FeatureName,
+  ALL_FEATURES,
+} from "../../constants/features";
+import { SELECTORS } from "../../constants/selectors";
 
 /**
  * Page Object for the admin edit room page.
@@ -21,7 +27,7 @@ export class AdminEditRoomPage extends AdminBasePage {
    * Clicks the Edit button to enter edit mode.
    */
   async clickEditButton(): Promise<void> {
-    await this.page.locator('button:has-text("Edit")').click();
+    await this.page.locator(SELECTORS.ADMIN.EDIT_BUTTON).click();
   }
 
   /**
@@ -31,29 +37,18 @@ export class AdminEditRoomPage extends AdminBasePage {
    */
   async editRoom(newPrice: number, newFeatures: string[]): Promise<void> {
     // Click Edit button to enter edit mode
-    console.log("Entering edit mode");
     await this.clickEditButton();
 
     // Update price
-    console.log("Filling price");
-    await this.page.locator("#roomPrice").fill(newPrice.toString());
+    await this.page.locator(SELECTORS.ADMIN.ROOM_PRICE_INPUT).fill(newPrice.toString());
 
     // Update features (uncheck all, then check new ones)
-    const allFeatures = [
-      "WiFi",
-      "TV",
-      "Radio",
-      "Refreshments",
-      "Safe",
-      "Views",
-    ];
-    for (const feature of allFeatures) {
+    for (const feature of ALL_FEATURES) {
       const checkboxId = this.getCheckboxId(feature);
       if (checkboxId) {
         await this.page.locator(`#${checkboxId}`).uncheck();
       }
     }
-    console.log("Checking new features");
     for (const feature of newFeatures) {
       const checkboxId = this.getCheckboxId(feature);
       if (checkboxId) {
@@ -62,23 +57,13 @@ export class AdminEditRoomPage extends AdminBasePage {
     }
 
     // Click update button
-    console.log("Clicking update button");
-    await this.page.locator("button").filter({ hasText: "Update" }).click();
-    console.log("Update button clicked");
+    await this.page.locator(SELECTORS.ADMIN.UPDATE_BUTTON).filter({ hasText: "Update" }).click();
   }
 
   /**
    * Helper to get checkbox ID for a feature.
    */
   private getCheckboxId(feature: string): string | null {
-    const map: { [key: string]: string } = {
-      WiFi: "wifiCheckbox",
-      TV: "tvCheckbox",
-      Radio: "radioCheckbox",
-      Refreshments: "refreshmentsCheckbox",
-      Safe: "safeCheckbox",
-      Views: "viewsCheckbox",
-    };
-    return map[feature] || null;
+    return FEATURE_CHECKBOX_IDS[feature as FeatureName] || null;
   }
 }
