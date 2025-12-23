@@ -1,29 +1,26 @@
-import { test, expect } from "@playwright/test";
-import { AdminLoginPage } from "../../pages/admin/AdminLoginPage";
+import { expect } from "@playwright/test";
+import { test } from "../../fixtures/adminAuth";
 import { AdminRoomsPage } from "../../pages/admin/AdminRoomsPage";
 import { AdminEditRoomPage } from "../../pages/admin/AdminEditRoomPage";
-import { BASE_URL } from "../../config/env";
+import { RoomApiService } from "../../services/RoomApiService";
+import { SELECTORS } from "../../constants/selectors";
 
 test("Create room via admin UI and verify on user API", async ({
-  page,
+  adminAuthenticatedPage,
   request,
 }) => {
-  const loginPage = new AdminLoginPage(page);
+  const page = adminAuthenticatedPage;
   const adminRoomsPage = new AdminRoomsPage(page);
+  const roomService = new RoomApiService(request);
 
   // Generate unique room name to avoid conflicts
   const roomName = `666-${Date.now()}`;
 
-  // Login to admin
-  await loginPage.navigate();
-  await loginPage.login();
-  await page.waitForURL(/\/admin\/rooms/);
-
   // Intercept the API call for creating a room (plus: verify backend interaction)
-  let createRoomRequest: any = null;
+  let createRoomRequestBody: any = null;
   await page.route("**/room", async (route) => {
     if (route.request().method() === "POST") {
-      createRoomRequest = route.request();
+      createRoomRequestBody = route.request().postDataJSON();
       await route.continue(); // Allow the request to proceed
     } else {
       await route.continue();
@@ -38,51 +35,40 @@ test("Create room via admin UI and verify on user API", async ({
 
   // Wait for the new room to appear in the UI
   await page
-    .locator('[data-testid="roomlisting"]')
+    .locator(SELECTORS.ADMIN.ROOM_LISTING)
     .filter({ hasText: roomName })
     .waitFor({ state: "visible" });
 
   // Verify the intercepted API call (plus: ensures correct data sent)
-  expect(createRoomRequest).not.toBeNull();
-  const requestBody = createRoomRequest.postDataJSON();
-  expect(requestBody.roomName).toBe(roomName);
-  expect(requestBody.type).toBe("Single");
-  expect(requestBody.accessible).toBe(true);
-  expect(requestBody.roomPrice).toBe("888");
-  expect(requestBody.features).toContain("WiFi");
+  expect(createRoomRequestBody).not.toBeNull();
+  expect(createRoomRequestBody.roomName).toBe(roomName);
+  expect(createRoomRequestBody.type).toBe("Single");
+  expect(createRoomRequestBody.accessible).toBe(true);
+  expect(createRoomRequestBody.roomPrice).toBe("888");
+  expect(createRoomRequestBody.features).toContain("WiFi");
 
   // Check that the room was created on the User API
-  const userResponse = await request.get(`${BASE_URL}/api/room`);
-  expect(userResponse.ok()).toBeTruthy();
-  const userData = await userResponse.json();
-  const room = userData.rooms.find((r: any) => r.roomName === roomName);
+  const room = await roomService.findRoomByName(roomName);
   expect(room).toBeDefined();
-  expect(room.type).toBe("Single");
-  expect(room.roomPrice).toBe(888);
+  expect(room?.type).toBe("Single");
+  expect(room?.roomPrice).toBe(888);
 });
 
 test("Edit room via admin UI and verify on user API", async ({
-  page,
+  adminAuthenticatedPage,
   request,
 }) => {
-  const loginPage = new AdminLoginPage(page);
+  const page = adminAuthenticatedPage;
   const adminRoomsPage = new AdminRoomsPage(page);
   const adminEditRoomPage = new AdminEditRoomPage(page);
+  const roomService = new RoomApiService(request);
 
-  // Login to admin
-  await loginPage.navigate();
-  await loginPage.login();
-  await page.waitForURL(/\/admin\/rooms/);
-  await page.waitForLoadState("networkidle"); // Ensure page is fully loaded
+  await page.waitForLoadState("networkidle");
 
   // Get initial room details
   const rooms = await adminRoomsPage.getRoomRows();
-  console.log("Number of rooms found:", rooms.length);
   const roomId = await rooms[0].getRoomId();
-  console.log("Editing room with ID:", roomId);
   const originalPrice = await rooms[0].getPrice();
-  const originalFeatures = await rooms[0].getDetails();
-  console.log("Original features:", originalFeatures);
 
   // Click on the first room row to navigate to edit page
   await adminRoomsPage.clickRoomRow(0);
@@ -92,15 +78,15 @@ test("Edit room via admin UI and verify on user API", async ({
   const newFeatures = ["WiFi", "Safe"];
   await adminEditRoomPage.editRoom(newPrice, newFeatures);
 
-  // Wait for the edit to process
-  await page.waitForTimeout(2000);
+  // Wait for network activity to complete
+  await page.waitForLoadState("networkidle");
 
   // Check that the room was edited on the User API
-  const userResponse = await request.get(`${BASE_URL}/api/room`);
-  expect(userResponse.ok()).toBeTruthy();
-  const userData = await userResponse.json();
-  const room = userData.rooms.find((r: any) => r.roomid === roomId);
-  console.log("USER DATA ROOMS:", userData.rooms);
-  expect(room.roomPrice).toBe(newPrice);
-  expect(room.features).toContain("WiFi");
+  const allRooms = await roomService.getRooms();
+  const room = allRooms.find((r) => r.roomid === roomId);
+  
+  expect(room).toBeDefined();
+  expect(room?.roomPrice).toBe(newPrice);
+  expect(room?.features).toContain("WiFi");
+  expect(room?.features).toContain("Safe");
 });

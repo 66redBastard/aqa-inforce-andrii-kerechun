@@ -1,6 +1,11 @@
 import { Page } from "@playwright/test";
 import { AdminBasePage } from "./AdminBasePage";
 import { RoomRowComponent } from "../../components/admin/RoomRowComponent";
+import {
+  FEATURE_CHECKBOX_IDS,
+  FeatureName,
+} from "../../constants/features";
+import { SELECTORS } from "../../constants/selectors";
 
 /**
  * Page Object for the admin rooms page.
@@ -22,7 +27,7 @@ export class AdminRoomsPage extends AdminBasePage {
    * Gets all room row components.
    */
   async getRoomRows(): Promise<RoomRowComponent[]> {
-    const rows = this.page.locator('[data-testid="roomlisting"]');
+    const rows = this.page.locator(SELECTORS.ADMIN.ROOM_LISTING);
     const count = await rows.count();
     return Array.from(
       { length: count },
@@ -35,7 +40,7 @@ export class AdminRoomsPage extends AdminBasePage {
    * @param roomIndex - Index of the room to edit (0-based).
    */
   async clickRoomRow(roomIndex: number): Promise<void> {
-    const rows = this.page.locator('[data-testid="roomlisting"]');
+    const rows = this.page.locator(SELECTORS.ADMIN.ROOM_LISTING);
     await rows.nth(roomIndex).click();
   }
 
@@ -54,10 +59,10 @@ export class AdminRoomsPage extends AdminBasePage {
     price: number,
     features: string[]
   ): Promise<void> {
-    await this.page.locator("#roomName").fill(roomName);
-    await this.page.locator("#type").selectOption(type);
-    await this.page.locator("#accessible").selectOption(accessible.toString());
-    await this.page.locator("#roomPrice").fill(price.toString());
+    await this.page.locator(SELECTORS.ADMIN.ROOM_NAME_INPUT).fill(roomName);
+    await this.page.locator(SELECTORS.ADMIN.ROOM_TYPE_SELECT).selectOption(type);
+    await this.page.locator(SELECTORS.ADMIN.ROOM_ACCESSIBLE_SELECT).selectOption(accessible.toString());
+    await this.page.locator(SELECTORS.ADMIN.ROOM_PRICE_INPUT).fill(price.toString());
 
     // Check feature checkboxes
     for (const feature of features) {
@@ -67,21 +72,13 @@ export class AdminRoomsPage extends AdminBasePage {
       }
     }
 
-    await this.page.locator("#createRoom").click();
+    await this.page.locator(SELECTORS.ADMIN.CREATE_ROOM_BUTTON).click();
   }
 
   /**
    * Helper to get checkbox ID for a feature.
    */
   private getCheckboxId(feature: string): string | null {
-    const map: { [key: string]: string } = {
-      WiFi: "wifiCheckbox",
-      TV: "tvCheckbox",
-      Radio: "radioCheckbox",
-      Refreshments: "refreshCheckbox",
-      Safe: "safeCheckbox",
-      Views: "viewsCheckbox",
-    };
-    return map[feature] || null;
+    return FEATURE_CHECKBOX_IDS[feature as FeatureName] || null;
   }
 }
